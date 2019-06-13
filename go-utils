@@ -12,11 +12,11 @@ test_file=""
 
 # script usage
 help() {
-  echo 'usage: gotest [-m <light|dark>] [-v] [-l] [-t] [-r]
+  echo 'usage: gou [-m <light|dark>] [-v] [-l] [-t] [-r]
 -m  mode light|dark  [ default is dark ]
 
 Only one of the following args can be run at a time.
-The first arg in the command [ gotest -rlt ] will only use [-r] before exiting.
+The first arg in the command [ gou -rlt ] will only use [-r] before exiting.
 -l  lint files only mode    [ -vl  for verbose linting ]
 -t  test program only mode  [ -vt  for verbose testing ]
 -r  run program only mode
@@ -24,8 +24,8 @@ The first arg in the command [ gotest -rlt ] will only use [-r] before exiting.
 
 Script Setup:
 Have the go-linting script in your ~/HOME directory.
-Alias the script in your ~/.bash_profile:  
-alias gotest="~/./.go-linting"'
+Alias the script in your bash_profile:  
+alias gou="path-to-script"'
   exit 0
 }
 
@@ -38,7 +38,7 @@ verbose=""
 while getopts ":m:ltrv" opt; do
     case "${opt}" in
     m)  mode=${OPTARG};;
-    l)  runOne "golangci-lint run *.go $verbose";;
+    l)  runOne "golangci-lint run $verbose";;
     t)  runOne "go test ./ $verbose";;
     r)  runOne "go run main.go";;
     v)  verbose="-v";;
@@ -77,7 +77,7 @@ formatFile() {
 # golangci-lint : lint files
 lintFile() {
   local lint
-  lint=$(golangci-lint run ./*.go)
+  lint=$(golangci-lint run)
   if [[ $lint != "" ]]; then
     test_checks=1
     echo "$lint"
@@ -90,7 +90,7 @@ lintFile() {
 # go test : main.go
 runTest() {
   local t
-  t=$(go test ./)
+  t=$(go test -race ./...)
   if [[ $t == *"FAIL:"* ]]; then
     test_checks=1
     echo "$t"
@@ -103,7 +103,7 @@ runTest() {
 # go test -coverprofile : code coverage
 codeCoverage() {
   local code_cov
-  code_cov=$(go test -coverprofile=c.out ./)
+  code_cov=$(go test -coverprofile=c.out -covermode=atomic ./...)
   if [[ $code_cov != *"100.0"* ]]; then
     test_checks=1
     echo "$code_cov"
