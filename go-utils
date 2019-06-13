@@ -1,0 +1,163 @@
+#!/bin/bash
+
+# COLOUR TABLE
+# colour information
+# start/end colour: "\x1B"
+s="\x1B"
+# return font to normal: "[0m"
+c="[0m"
+
+test_checks=0
+test_file=""
+
+# script usage
+help() {
+  echo 'usage: gotest [-m <light|dark>] [-v] [-l] [-t] [-r]
+-m  mode light|dark  [ default is dark ]
+
+Only one of the following args can be run at a time.
+The first arg in the command [ gotest -rlt ] will only use [-r] before exiting.
+-l  lint files only mode    [ -vl  for verbose linting ]
+-t  test program only mode  [ -vt  for verbose testing ]
+-r  run program only mode
+-v  run command in verbose mode
+
+Script Setup:
+Have the go-linting script in your ~/HOME directory.
+Alias the script in your ~/.bash_profile:  
+alias gotest="~/./.go-linting"'
+  exit 0
+}
+
+# used to run a single command + exit
+runOne() { $1; exit 0; }
+
+mode=""
+verbose=""
+# get all the args
+while getopts ":m:ltrv" opt; do
+    case "${opt}" in
+    m)  mode=${OPTARG};;
+    l)  runOne "golangci-lint run *.go $verbose";;
+    t)  runOne "go test ./ $verbose";;
+    r)  runOne "go run main.go";;
+    v)  verbose="-v";;
+    *)  help;;
+    esac
+done
+
+# dark mode colour variables
+st="[38;5;83m"  # success
+it="[96m"       # info
+dt="[33m"       # divider/run code
+et="[38;5;9m"   # error
+wt="[38;5;214m" # warn
+
+# light mode colour variables
+if [[ $mode == "light" ]]; then
+  st="[38;5;22m"    # success
+  it="[38;5;27m"    # info
+  dt="[38;5;129m"   # divider/run code
+  et="[38;5;9m"     # error
+  wt="[38;5;202m"   # warn
+fi
+
+# gofmt -w : format files
+formatFile() {
+  local file=$1
+  local tester="${file//./_test.}"
+  echo -e "[$s$it formatting: $file $s$c]"
+  gofmt -w "$file"
+  if [[ -f "$tester" ]]; then
+    test_file=$tester
+  fi
+  echo -e "[$s$st finished formatting: $file $s$c]"
+}
+
+# golangci-lint : lint files
+lintFile() {
+  local lint
+  lint=$(golangci-lint run ./*.go)
+  if [[ $lint != "" ]]; then
+    test_checks=1
+    echo "$lint"
+    echo -e "[$s$et linting completed with warnings $s$c]"
+  else
+    echo -e "[$s$st linting completed successfully $s$c]"
+  fi
+}
+
+# go test : main.go
+runTest() {
+  local t
+  t=$(go test ./)
+  if [[ $t == *"FAIL:"* ]]; then
+    test_checks=1
+    echo "$t"
+    echo -e "[$s$et test cases completed with errors $s$c]"
+  else
+    echo -e "[$s$st all test cases completed successfully $s$c]"
+  fi
+}
+
+# go test -coverprofile : code coverage
+codeCoverage() {
+  local code_cov
+  code_cov=$(go test -coverprofile=c.out ./)
+  if [[ $code_cov != *"100.0"* ]]; then
+    test_checks=1
+    echo "$code_cov"
+    go tool cover -html=c.out
+    echo -e "[$s$et code coverage checks completed with warnings $s$c]"
+  else
+    echo -e "[$s$st code coverage checks completed successfully with 100% coverage $s$c]"
+  fi
+}
+
+# go run main.go : run main.go
+runCode() {
+    echo -e "\n[$s$dt running tested files now $s$c]"
+    echo -e "[$s$it main.go output $s$c]\n"
+    go run main.go
+}
+
+# main program logic
+main() {
+  echo "GO CODE CLEANER & RUNNER"
+
+  echo -e "\n[$s$it cleaning code $s$c]"
+  echo -e "$s$dt-------------------------------------$s$c"
+
+  # format each file
+  for i in *.go; do
+    if [[ -f $i ]]; then
+      formatFile "$i"
+    fi
+  done
+
+  # lint files
+  lintFile
+
+  # run the test
+  if [[ -f "$test_file" ]]; then
+    runTest
+    codeCoverage
+  else
+    echo "No test file found. Skipping code coverage checks."
+  fi
+
+  echo -e "$s$dt-------------------------------------$s$c"
+
+  # run the code
+  if [[ $test_checks == 0 ]]; then
+    echo -e "[$s$st all code checks completed successfully $s$c]"
+    echo -e "$s$dt-------------------------------------$s$c"
+    runCode
+  else
+    echo -e "[$s$wt code checks completed with warnings $s$c]"
+    echo -e "$s$dt-------------------------------------$s$c"
+  fi
+}
+
+# run main
+main
