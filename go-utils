@@ -20,12 +20,7 @@ The first arg in the command [ gou -rlt ] will only use [-r] before exiting.
 -l  lint files only mode    [ -vl  for verbose linting ]
 -t  test program only mode  [ -vt  for verbose testing ]
 -r  run program only mode
--v  run command in verbose mode
-
-Script Setup:
-Have the go-linting script in your ~/HOME directory.
-Alias the script in your bash_profile:  
-alias gou="path-to-script"'
+-v  run command in verbose mode'
   exit 0
 }
 
