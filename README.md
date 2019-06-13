@@ -12,6 +12,9 @@ _Go Code formatter, linter, tester and runner all in one_
   
 ## Usage
 -------
+* This script needs to be run from within the same folder of main.go.  
+* Currently can only see files within the same folder.  
+
 If an alias was created for this script then use that alias within the go folder that you want to test. Otherwise call the bash script as a normal bash script, using _./path-to/go-utils_  
 For running the all in one (gofmt, golintci, test and run main.go): 
 ```
