@@ -27,7 +27,7 @@ To change to light mode: `./path-to/go-utils -m light`
 
 ### Usage Help:
 ./path-to/go-utils [-m <light|dark>] [-v] [-l] [-t] [-r]  
-> -m  mode light|dark  [ default is dark ]. It is recommended if running this in a terminal with a dark background, either mode is fine. If running in a white or light background, then use the light mode to make the colours more readable.   
+> -m  mode light|dark  [ default is dark ]. If running go-utils in a terminal with a dark background, either mode is fine. If running in a white or light background, then use the light mode to make the colours more readable.   
 
 > Only one of the following args can be run at a time.  
 > The first arg in the command [ ./path-to/go-utils -rlt ] will only use [-r] before exiting.  
