@@ -12,11 +12,13 @@ test_file=""
 
 # script usage
 help() {
-  echo 'usage: gou [-m <light|dark>] [-v] [-l] [-t] [-r]
--m  mode light|dark  [ default is dark ]
+  echo 'usage: ./path-to/go-utils [-m <light|dark>] [-v] [-l] [-t] [-r]
+-m  mode light|dark  [ default is dark ]. If running go-utils in a terminal with a dark 
+                      background, either mode is fine. If running in a white or light background, 
+                      then use the light mode to make the colours more readable.
 
 Only one of the following args can be run at a time.
-The first arg in the command [ gou -rlt ] will only use [-r] before exiting.
+The first arg in the command [ ./path-to/go-utils -rlt ] will only use [-r] before exiting.
 -l  lint files only mode    [ -vl  for verbose linting ]
 -t  test program only mode  [ -vt  for verbose testing ]
 -r  run program only mode
