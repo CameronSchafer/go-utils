@@ -7,22 +7,30 @@ s="\x1B"
 # return font to normal: "[0m"
 c="[0m"
 
+# 0 is all checks passed
+# 1 is at least one check failed
 test_checks=0
 test_file=""
 
 # script usage
 help() {
-  echo 'usage: ./path-to/go-utils [-m <light|dark>] [-v] [-l] [-t] [-r]
--m  mode light|dark  [ default is dark ]. If running go-utils in a terminal with a dark 
-                      background, either mode is fine. If running in a white or light background, 
-                      then use the light mode to make the colours more readable.
+  echo './path-to/go-utils [-m <light|dark>] [-v] [-l] [-t] [-r]  
+    -m  mode light|dark  [ default is dark ]. If running go-utils in a terminal with a dark 
+                          background, either mode is fine. If running in a white or light background, 
+                          then use the light mode to make the colours more readable.   
+        $ ./path-to/go-utils -m light
 
-Only one of the following args can be run at a time.
-The first arg in the command [ ./path-to/go-utils -rlt ] will only use [-r] before exiting.
--l  lint files only mode    [ -vl  for verbose linting ]
--t  test program only mode  [ -vt  for verbose testing ]
--r  run program only mode
--v  run command in verbose mode'
+    Only one of the following args can be run at a time.  
+    The first arg in the command [ ./path-to/go-utils -rlt ] will only use [-r] before exiting.  
+    -l  lint files only mode    [ -vl  for verbose linting ]  
+        $ ./path-to/go-utils -l
+    -t  test program only mode  [ -vt  for verbose testing ]  
+        $ ./path-to/go-utils -t
+    -r  run program only mode  
+        $ ./path-to/go-utils -r
+    -v  run command in verbose mode
+        $ ./path-to/go-utils -vl
+        $ ./path-to/go-utils -vt'
   exit 0
 }
 
@@ -62,11 +70,12 @@ fi
 # gofmt -w : format files
 formatFile() {
   local file=$1
-  local tester="${file//./_test.}"
+  local testFile="${file//./_test.}"
   echo -e "[$s$it formatting: $file $s$c]"
   gofmt -w "$file"
-  if [[ -f "$tester" ]]; then
-    test_file=$tester
+  if [[ -f "$testFile" ]]; then
+    test_file=$testFile
+    echo -e "[$s$it test file found: $test_file $s$c]"
   fi
   echo -e "[$s$st finished formatting: $file $s$c]"
 }
@@ -154,6 +163,8 @@ main() {
     echo -e "[$s$wt code checks completed with warnings $s$c]"
     echo -e "$s$dt-------------------------------------$s$c"
   fi
+
+  exit 0
 }
 
 # run main
