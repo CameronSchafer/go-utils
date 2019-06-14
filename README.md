@@ -1,4 +1,4 @@
-# Go Utilities [![Build Status](https://travis-ci.com/CameronSchafer/go-utils.svg?branch=master)](https://travis-ci.com/CameronSchafer/go-utils)
+# Go Utilities [![Build Status](https://travis-ci.com/CameronSchafer/Go-Utilities.svg?branch=master)](https://travis-ci.com/CameronSchafer/Go-Utilities)
 -------
 
 _Go Code formatter, linter, tester and runner all in one_
